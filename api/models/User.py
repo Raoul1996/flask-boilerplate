@@ -1,19 +1,17 @@
 from api.core import Mixin
-from .base import db
-from datetime import datetime
+from .base import db, TimestampMixin
 
 
-class User(Mixin, db.Model):
-    """Person Table."""
+class User(Mixin, TimestampMixin, db.Model):
+    """User Table."""
 
     __tablename__ = "robot_user"
 
     id = db.Column(db.BigInteger, unique=True, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String, nullable=False)
+    college = db.Column(db.SMALLINT, nullable=False, default=2)
     password = db.Column(db.String, nullable=False)
-    create_time = db.Column(db.DateTime, default=datetime.now)
-    update_time = db.Column(db.DateTime, default=datetime.now)
 
     def __init__(self, name: str):
         self.name = name

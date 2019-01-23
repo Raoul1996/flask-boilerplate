@@ -6,7 +6,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from api.models.base import db
 
-auth = Blueprint("auth", __name__, url_prefix="/auth")
+auth = Blueprint("auth", __name__, url_prefix="/api/v1/auth")
 
 
 def login_required(view):
@@ -15,7 +15,7 @@ def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
-            return create_response(data={},code=4001,message="need login")
+            return create_response(data={}, code=4001, message="need login")
         return view(**kwargs)
 
     return wrapped_view
@@ -62,7 +62,7 @@ def register():
             db.session.commit()
             return create_response(data={"name": name, "email": email}, code=0)
         else:
-            return create_response(data={},code=9000,message=error)
+            return create_response(data={}, code=9000, message=error)
         flash(error)
 
     return create_response(data={}, message="unknown error", code=5001)
@@ -89,6 +89,12 @@ def login():
             return create_response(code=10002, message=error)
 
     return create_response(data={}, message="unknown error", code=5001)
+
+
+@auth.route("/profile", methods=["GET"])
+@login_required
+def profile():
+    return create_response(data=g.user.to_dict(['id', 'name', 'email']))
 
 
 @auth.route("/logout")

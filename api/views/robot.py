@@ -4,7 +4,7 @@ from flask import (Blueprint, flash, g, request)
 from api.models.base import db
 from api.views.auth import login_required
 
-robot = Blueprint("robot", __name__, url_prefix="/robot")
+robot = Blueprint("robot", __name__, url_prefix="/api/v1/robot")
 
 
 @robot.route("", methods=["POST"])

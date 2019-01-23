@@ -13,10 +13,3 @@ def index():
     # try using ipdb here :) you can inject yourself
     logger.info("Hello World!")
     return "<h1>Hello World!</h1>"
-
-
-# function that is called when you visit /persons
-@main.route("/persons", methods=["GET"])
-def get_persons():
-    persons = User.query.all()
-    return create_response(data=serialize_list(persons), code=0)

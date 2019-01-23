@@ -1,9 +1,8 @@
 from api.core import Mixin
-from datetime import datetime
-from .base import db
+from .base import db, TimestampMixin
 
 
-class Data(Mixin, db.Model):
+class Data(Mixin, TimestampMixin, db.Model):
     __tablename__ = "robot_data"
     id = db.Column(db.BigInteger, unique=True, primary_key=True)
     robot_id = db.Column(db.BigInteger, nullable=False)
@@ -12,5 +11,3 @@ class Data(Mixin, db.Model):
     z = db.Column(db.String, default="")
     ip = db.Column(db.String, default="")
     data = db.Column(db.Text, default="")
-    create_time = db.Column(db.DateTime, default=datetime.now)
-    update_time = db.Column(db.DateTime, default=datetime.now)

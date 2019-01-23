@@ -18,6 +18,8 @@ testing-postgresql = "==1.3.0"
 Flask-SQLAlchemy = "==2.3.2"
 python-dotenv = "*"
 psycopg2-binary = "*"
+thrift = "*"
+archer = "*"
 
 [requires]
 python_version = "3.7"

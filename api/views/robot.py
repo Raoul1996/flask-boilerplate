@@ -34,7 +34,6 @@ def robot_create(args):
         db.session.add(robot_instance)
         db.session.commit()
         return create_response(data=args, code=0)
-    flash(error)
 
 
 @robot.route("/list", methods=["GET"])

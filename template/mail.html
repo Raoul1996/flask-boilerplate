@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>Password Reset</title>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Password Reset Mail</h1>
+{% if name %}
+    <div> Dear {{ name }},</div>
+{% endif %}
+<div> You can reset your password by connect the admin</div>
+<div>Now you can't reset it by yourself.</div>
+</body>
+</html>

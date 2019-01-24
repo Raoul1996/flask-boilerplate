@@ -2,10 +2,9 @@ import os
 import logging
 
 from flask import Flask, request
-from flask_cors import CORS
 from flask_migrate import Migrate
+from flask_mail import Mail
 from sqlalchemy_utils import create_database, database_exists
-
 from api.config import config
 from api.core import all_exception_handler
 
@@ -15,6 +14,9 @@ class RequestFormatter(logging.Formatter):
         record.url = request.url
         record.remote_addr = request.remote_addr
         return super().format(record)
+
+
+mail = Mail()
 
 
 # why we use application factories http://flask.pocoo.org/docs/1.0/patterns/appfactories/#app-factories
@@ -29,8 +31,6 @@ def create_app(test_config=None):
         app.run()
     """
     app = Flask(__name__)
-
-    CORS(app)  # add CORS
 
     # check environment variables to see which config to load
     env = os.environ.get("FLASK_ENV", "dev")
@@ -73,8 +73,8 @@ def create_app(test_config=None):
 
     # register sqlalchemy to this app
     from api.models import db
-
     db.init_app(app)  # initialize Flask SQLALchemy with this flask app
+    mail.init_app(app)
     Migrate(app, db)
 
     # import and register blueprints

@@ -90,9 +90,11 @@ def all_exception_handler(error) -> Tuple[Response, int]:
     :param error
     :returns Tuple of a Flask Response and int
     """
-    if error.code and error.code == 422:
-        return create_response(message=str(error.description), data=error.data["messages"], status=int(error.code or 500))
-    print(error)
+    if hasattr(error, 'code'):
+        if error.code == 422:
+            return create_response(message=str(error.description), data=error.data["messages"], status=int(error.code))
+        elif hasattr(error, 'description'):
+            return create_response(message=str(error.description), data={}, status=int(error.code or 500))
     return create_response(message="unknown error", status=500)
 
 

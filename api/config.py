@@ -21,10 +21,16 @@ class DevelopmentConfig(Config):
         get_pg_url()
         if get_pg_url()
         else "postgresql://testusr:password@127.0.0.1:5432/testdb"
-    # TODO set the URI to get_pg_url() once you have `creds.ini` setup
+        # TODO set the URI to get_pg_url() once you have `creds.ini` setup
     )
     SQLALCHEMY_DATABASE_URI = url
     DEBUG = True
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 465
+    MAIL_USERNAME = 'id@gmail.com'
+    MAIL_PASSWORD = '*****'
+    MAIL_USE_TLS = False
+    MAIL_USE_SSL = True
 
 
 class ProductionConfig(Config):

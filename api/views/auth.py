@@ -1,22 +1,30 @@
 import functools
 from api.core import create_response
 from api.models import User
+from flask_mail import Mail, Message
+import smtplib
+from api import mail
 from flask import (Blueprint, flash, g, request, session)
 from werkzeug.security import check_password_hash, generate_password_hash
 from api.models.base import db
-from webargs import fields
+from webargs import fields, validate
 from webargs.flaskparser import use_args
 
 auth = Blueprint("auth", __name__, url_prefix="/api/v1/auth")
 
 register_args = {
-    "name": fields.Str(required=True),
-    "email": fields.Str(required=True),
-    "password": fields.Str(required=True)
+    "name": fields.Str(required=True, validate=validate.Length(min=4)),
+    "email": fields.Str(required=True, validate=validate.Email()),
+    "password": fields.Str(required=True, validate=lambda p: len(p) >= 6),
 }
 login_args = {
-    "name": fields.Str(required=True),
-    "password": fields.Str(required=True)
+    "name": fields.Str(required=True, validate=validate.Length(min=4)),
+    "password": fields.Str(required=True, validate=lambda p: len(p) >= 6),
+}
+
+forget_args = {
+    "name": fields.Str(required=True, validate=validate.Length(min=4)),
+    "email": fields.Str(required=True, validate=validate.Email()),
 }
 
 
@@ -45,50 +53,68 @@ def load_logged_in_user():
 
 
 @auth.route("/register", methods=["POST"])
-@use_args(register_args)
+@use_args(register_args, locations=("json",))
 def register(args):
     """Register a new user.
     Validates that the name is not already taken. Hashes the
     password for security.
     """
-    if request.method == "POST":
-        name = args["name"]
-        email = args["email"]
-        password = args["password"]
-        is_exist = User.query.filter_by(name=name).first()
-        if is_exist:
-            return create_response(data={}, code=1001, message="user exists")
-        user = User(name=name)
-        user.password = generate_password_hash(password)
-        user.email = email
-        db.session.add(user)
-        db.session.commit()
-        return create_response(data={"name": name, "email": email}, code=0)
-    return create_response(data={}, message="unknown error", code=5001)
+    name = args["name"]
+    email = args["email"]
+    password = args["password"]
+    is_exist = User.query.filter_by(name=name).first()
+    if is_exist:
+        return create_response(data={}, code=1001, message="user exists")
+    user = User(name=name)
+    user.password = generate_password_hash(password)
+    user.email = email
+    db.session.add(user)
+    db.session.commit()
+    return create_response(data={"name": name, "email": email}, code=0)
 
 
 @auth.route("/login", methods=["POST"])
-@use_args(login_args)
+@use_args(login_args, locations=("json",))
 def login(args):
     """Log in a registered user by adding the user id to the session."""
-    if request.method == "POST":
-        name = args["name"]
-        password = args["password"]
-        error = None
-        user = User.query.filter_by(name=name).first()
-        if user is None:
-            error = "Incorrect name."
-        elif not check_password_hash(user.password, password):
-            error = "Incorrect password."
-        if error is None:
-            # store the user id in a new session and return to the index
-            session.clear()
-            session["user_id"] = user.id
-            return create_response(code=0, data=user.to_dict(["id", "name"]))
-        else:
-            return create_response(code=10002, message=error, data={})
+    name = args["name"]
+    password = args["password"]
+    error = None
+    user = User.query.filter_by(name=name).first()
+    if user is None:
+        error = "Incorrect name."
+    elif not check_password_hash(user.password, password):
+        error = "Incorrect password."
+    if error is None:
+        # store the user id in a new session and return to the index
+        session.clear()
+        session["user_id"] = user.id
+        return create_response(code=0, data=user.to_dict(["id", "name"]))
+    else:
+        return create_response(code=10002, message=error, data={})
 
-    return create_response(data={}, message="unknown error", code=5001)
+
+@auth.route("/forget", methods=["PUT"])
+@use_args(forget_args, locations=("json",))
+def forget(args):
+    email = args["email"]
+    is_exist = User.query.filter_by(email=email).first()
+    if is_exist:
+        try:
+            msg = Message(
+                'hhhhhh',
+                recipients=[email]
+            )
+            msg.html = '<h1>hahaha</h1>'
+            res = mail.send(msg)
+            return create_response(data=res.to_dict(),message="Send mail successful", code=0,)
+        except smtplib.SMTPAuthenticationError:
+            return create_response(data={}, message="SMTP Authentication failed", code=4002)
+        except smtplib.SMTPRecipientsRefused:
+            return create_response(data={}, message="Unable to send email to {}".format(email), code=4003)
+        except Exception:
+            raise Exception
+    return create_response(data={}, message="email is not current", code=1003)
 
 
 @auth.route("/profile", methods=["GET"])

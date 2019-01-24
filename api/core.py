@@ -63,8 +63,11 @@ def create_response(
     """
     if type(data) is not dict and type(data) is not list and data is not None:
         raise TypeError("Data should be a dictionary 😞")
-
-    response = {"code": code, "success": 200 <= status < 300, "message": message, "result": data}
+    success = 200 <= status < 300
+    if success:
+        response = {"code": code, "success": success, "message": message, "data": data}
+    else:
+        response = {"code": -1, "success": success, "message": message, "data": data}
     return jsonify(response), status
 
 
@@ -82,12 +85,15 @@ def serialize_list(items: List, keys=None) -> List:
 
 # add specific Exception handlers before this, if needed
 # More info at http://flask.pocoo.org/docs/1.0/patterns/apierrors/
-def all_exception_handler(error: Exception) -> Tuple[Response, int]:
+def all_exception_handler(error) -> Tuple[Response, int]:
     """Catches and handles all exceptions, add more specific error Handlers.
-    :param Exception
+    :param error
     :returns Tuple of a Flask Response and int
     """
-    return create_response(message=str(error), status=500)
+    if error.code and error.code == 422:
+        return create_response(message=str(error.description), data=error.data["messages"], status=int(error.code or 500))
+    print(error)
+    return create_response(message="unknown error", status=500)
 
 
 def get_pg_url(file: str = "creds.ini") -> str:

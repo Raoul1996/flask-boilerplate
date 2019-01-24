@@ -3,10 +3,21 @@ from api.core import create_response
 from api.models import User
 from flask import (Blueprint, flash, g, request, session)
 from werkzeug.security import check_password_hash, generate_password_hash
-
 from api.models.base import db
+from webargs import fields
+from webargs.flaskparser import use_args
 
 auth = Blueprint("auth", __name__, url_prefix="/api/v1/auth")
+
+register_args = {
+    "name": fields.Str(required=True),
+    "email": fields.Str(required=True),
+    "password": fields.Str(required=True)
+}
+login_args = {
+    "name": fields.Str(required=True),
+    "password": fields.Str(required=True)
+}
 
 
 def login_required(view):
@@ -34,46 +45,35 @@ def load_logged_in_user():
 
 
 @auth.route("/register", methods=["POST"])
-def register():
+@use_args(register_args)
+def register(args):
     """Register a new user.
     Validates that the name is not already taken. Hashes the
     password for security.
     """
     if request.method == "POST":
-        name = request.json["name"]
-        email = request.json["email"]
-        password = request.json["password"]
-        error = None
-
-        if not name:
-            error = "Name is required."
-        elif not password:
-            error = "Password is required."
-        elif not email:
-            error = "Email is required."
-        if error is None:
-            is_exist = User.query.filter_by(name=name).first()
-            if is_exist:
-                return create_response(data={}, code=1001, message="user exists")
-            user = User(name=name)
-            user.password = generate_password_hash(password)
-            user.email = email
-            db.session.add(user)
-            db.session.commit()
-            return create_response(data={"name": name, "email": email}, code=0)
-        else:
-            return create_response(data={}, code=9000, message=error)
-        flash(error)
-
+        name = args["name"]
+        email = args["email"]
+        password = args["password"]
+        is_exist = User.query.filter_by(name=name).first()
+        if is_exist:
+            return create_response(data={}, code=1001, message="user exists")
+        user = User(name=name)
+        user.password = generate_password_hash(password)
+        user.email = email
+        db.session.add(user)
+        db.session.commit()
+        return create_response(data={"name": name, "email": email}, code=0)
     return create_response(data={}, message="unknown error", code=5001)
 
 
 @auth.route("/login", methods=["POST"])
-def login():
+@use_args(login_args)
+def login(args):
     """Log in a registered user by adding the user id to the session."""
     if request.method == "POST":
-        name = request.json["name"]
-        password = request.json["password"]
+        name = args["name"]
+        password = args["password"]
         error = None
         user = User.query.filter_by(name=name).first()
         if user is None:
@@ -86,7 +86,7 @@ def login():
             session["user_id"] = user.id
             return create_response(code=0, data=user.to_dict(["id", "name"]))
         else:
-            return create_response(code=10002, message=error)
+            return create_response(code=10002, message=error, data={})
 
     return create_response(data={}, message="unknown error", code=5001)
 

@@ -8,7 +8,7 @@
 
 ## Dependencies
 
-See [Pipfile](./Pipfile)
+See [requirements.txt](./requirements.txt)
 
 ## Features
 
@@ -25,11 +25,7 @@ More features will coming.....
 
 ## Development
 
-### Install the `pipenv` before run `setup.sh`
-
-I'd like to use `pipenv`, but on `vps` or other has only limited system resource case (like your tencent cloud server, aliyun cloud server and etc.), `pipenv lock` is very slow, so you can use `pip install -r requirement` command, but make sure that you are **not** install package in `/usr/local/lib` path, it's global python library path!
-
-**Again, Don't install dependencies in global python library path.**
+### use python3.5
 
 ```bash
 chmod +x setup.sh

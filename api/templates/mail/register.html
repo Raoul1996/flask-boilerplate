@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>Password Reset</title>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Password Reset Mail</h1>
+{% if ctx.name %}
+    <div> Dear {{ ctx.name }},</div>
+{% endif %}
+<div> Welcome!</div>
+<div>Click here to verify your email:</div>
+<a href="http://localhost:5000/api/v1/auth/verify/{{ ctx.token }}">http://localhost:5000/api/v1/auth/verify/{{ ctx.token }}</a>
+<div><strong>Now we don't run this server on prod env. After you should config yourself domain.</strong></div>
+<div><strong>localhost isn't a public ip address</strong></div>
+<div>Thanks for your registration.</div>
+</body>
+</html>

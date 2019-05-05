@@ -14,9 +14,15 @@ data = Blueprint("data", __name__, url_prefix="/api/v1/data")
 def robot_data(args):
     robot_id = args["robot_id"]
     data_instance = Data(robot_id)
-    data_instance.x = args["x"]
-    data_instance.y = args["y"]
-    data_instance.z = args["z"]
+    data_instance.position_x = args["position_x"]
+    data_instance.position_y = args["position_y"]
+    data_instance.position_z = args["position_z"]
+    data_instance.velocity_x = args["velocity_x"]
+    data_instance.velocity_y = args["velocity_y"]
+    data_instance.velocity_z = args["velocity_z"]
+    data_instance.direction_x = args["direction_x"]
+    data_instance.direction_y = args["direction_y"]
+    data_instance.direction_z = args["direction_z"]
     data_instance.ip = args["ip"]
     data_instance.data = args["data"]
     try:

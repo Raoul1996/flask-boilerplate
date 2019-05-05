@@ -27,9 +27,15 @@ forget_args = {
 
 data_args = {
     "robot_id": fields.Str(required=True),
-    "x": fields.Str(required=True),
-    "y": fields.Str(required=True),
-    "z": fields.Str(required=True),
+    "position_x": fields.Str(required=True),
+    "position_y": fields.Str(required=True),
+    "position_z": fields.Str(required=True),
+    "velocity_x": fields.Str(required=True),
+    "velocity_y": fields.Str(required=True),
+    "velocity_z": fields.Str(required=True),
+    "direction_x": fields.Str(required=True),
+    "direction_y": fields.Str(required=True),
+    "direction_z": fields.Str(required=True),
     "ip": fields.Str(required=True),
     "data": fields.Str(required=True),
 }

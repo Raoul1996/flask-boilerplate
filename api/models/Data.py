@@ -6,7 +6,7 @@ class Data(Mixin, db.Model, TimestampMixin):
     __tablename__ = "robot_data"
 
     id = db.Column(db.BigInteger, unique=True, primary_key=True)
-    robot_id = db.Column(db.String(255), nullable=False)
+    robot_id = db.Column(db.BigInteger, nullable=False)
     position_x = db.Column(db.String(255), default=0)
     position_y = db.Column(db.String(255), default=0)
     position_z = db.Column(db.String(255), default=0)

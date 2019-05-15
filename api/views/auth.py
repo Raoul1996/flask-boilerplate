@@ -88,12 +88,12 @@ def register(args):
 @use_args(login_args, locations=("json",))
 def login(args):
     """Log in a registered user by adding the user id to the session."""
-    name = args["name"]
+    email = args["email"]
     password = args["password"]
     error = None
-    user = User.query.filter_by(name=name).first()
+    user = User.query.filter_by(email=email).first()
     if user is None:
-        error = "Incorrect name."
+        error = "Incorrect email."
     elif not check_password_hash(user.password, password):
         error = "Incorrect password."
     if error is None:

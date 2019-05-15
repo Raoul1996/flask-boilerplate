@@ -17,7 +17,7 @@ register_args = {
     "password": fields.Str(required=True, validate=lambda p: len(p) >= 6),
 }
 login_args = {
-    "name": fields.Str(required=True, validate=validate.Length(min=4)),
+    "email": fields.Str(required=True, validate=validate.Length(min=4)),
     "password": fields.Str(required=True, validate=lambda p: len(p) >= 6),
 }
 

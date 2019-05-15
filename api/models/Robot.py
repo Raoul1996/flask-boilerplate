@@ -10,6 +10,7 @@ class Robot(Mixin, db.Model, TimestampMixin):
     name = db.Column(db.String(100), unique=True, nullable=True)
     owner_id = db.Column(db.BigInteger, nullable=False)
     type = db.Column(db.String(4), nullable=False)
+    is_deleted = db.Column(db.Boolean, default=False)
 
     def __init__(self, name):
         self.name = name

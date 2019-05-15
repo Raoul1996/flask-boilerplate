@@ -8,7 +8,7 @@ class User(Mixin, db.Model, TimestampMixin):
     __tablename__ = "robot_user"
 
     id = db.Column(db.BigInteger, unique=True, primary_key=True)
-    name = db.Column(db.String(255), nullable=False)
+    name = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     college = db.Column(db.SMALLINT, nullable=False, default=2)
     admin = db.Column(db.Boolean, nullable=False, default=False)

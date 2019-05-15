@@ -30,7 +30,7 @@ class Mixin:
         for key in keys:
             if key in items:
                 val = getattr(self, key)
-                if key in ("create_time", "modify_time","update_time"):
+                if key in ("create_time", "modify_time", "update_time"):
                     val = datetime_to_str(val)
                 data_dict[key] = val
         data_dict.pop("_sa_instance_state", None)

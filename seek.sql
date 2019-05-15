@@ -98,7 +98,7 @@ CREATE TABLE `robot_user` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `email` varchar(100) NOT NULL,
-  `college` smallint(6) NOT NULL,
+  `grade` smallint(6) NOT NULL,
   `admin` tinyint(1) NOT NULL,
   `status` tinyint(1) NOT NULL,
   `password` varchar(255) NOT NULL,

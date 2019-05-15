@@ -1,3 +1,4 @@
+from datetime import datetime
 from api.core import create_response, serialize_list
 from api.models import Robot
 from flask import (Blueprint, g)
@@ -37,8 +38,9 @@ def get_list(args):
     ).items
     if robot_list:
         return create_response(
-            data={"data": serialize_list(robot_list, ["id", "name", "type", "description", "create_time"]),
-                  "total": robot_list_total_length},
+            data={
+                "data": serialize_list(robot_list),
+                "total": robot_list_total_length},
             code=0, )
     else:
         return create_response(data={}, code=3001, message="data is not exist")
@@ -55,9 +57,10 @@ def single_robot(args, **kwargs):
         robot_instance.name = args["name"]
         robot_instance.description = args["description"]
         robot_instance.type = args["type"]
+        robot_instance.update_time = datetime.now()
         db.session.commit()
         return create_response(
-            data=robot_instance.to_dict(["id", "name", "type", "create_time", "owner_id", "description"]),
+            data=robot_instance.to_dict(),
             code=0)
     else:
         return create_response(data={}, message="robot is not exist.", code=3001)
@@ -69,7 +72,25 @@ def get_single_robot(robot_id):
     robot_instance = Robot.query.filter_by(id=robot_id).first()
     if robot_instance:
         return create_response(
-            data=robot_instance.to_dict(["id", "name", "type", "create_time", "owner_id", "description"]),
+            data=robot_instance.to_dict(),
             code=0)
+    else:
+        return create_response(data={}, message="robot is not exist.", code=3001)
+
+
+@robot.route("/<int:robot_id>", methods=["PATCH"])
+@login_required
+def delete_robot_by_id(robot_id):
+    robot_instance = Robot.query.filter_by(id=robot_id).first()
+    if robot_instance:
+        print(g.user)
+        if g.user.id == robot_instance.owner_id:
+            robot_instance.is_deleted = True
+            robot_instance.update_time = datetime.now()
+            db.session.commit()
+            return create_response(data=robot_instance.to_dict(), code=0)
+        else:
+            return create_response(data={}, message="permission denied,only owner can delete their own robot.",
+                                   code=4003)
     else:
         return create_response(data={}, message="robot is not exist.", code=3001)

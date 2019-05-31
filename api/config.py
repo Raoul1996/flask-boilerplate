@@ -15,6 +15,12 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     LOG_FILE = "api.log"
     SECURITY_PASSWORD_SALT = "neuq"
+    MAIL_SERVER = "smtp.qq.com"
+    MAIL_PORT = 465
+    MAIL_USERNAME = get_email_conf()["address"]
+    MAIL_PASSWORD = get_email_conf()["pwd"]
+    MAIL_USE_TLS = False
+    MAIL_USE_SSL = True
 
 
 class DevelopmentConfig(Config):
@@ -39,11 +45,23 @@ class ProductionConfig(Config):
         "DATABASE_URL"
     )  # you may do the same as the development config
     DEBUG = False
+    MAIL_SERVER = "smtp.qq.com"
+    MAIL_PORT = 465
+    MAIL_USERNAME = get_email_conf()["address"]
+    MAIL_PASSWORD = get_email_conf()["pwd"]
+    MAIL_USE_TLS = False
+    MAIL_USE_SSL = True
 
 
 class DockerDevConfig(Config):
     SQLALCHEMY_DATABASE_URI = get_db_url()
     DEBUG = True
+    MAIL_SERVER = "smtp.qq.com"
+    MAIL_PORT = 465
+    MAIL_USERNAME = get_email_conf()["address"]
+    MAIL_PASSWORD = get_email_conf()["pwd"]
+    MAIL_USE_TLS = False
+    MAIL_USE_SSL = True
 
 
 config = {"base": Config, "dev": DevelopmentConfig, "prod": ProductionConfig, "docker": DockerDevConfig}

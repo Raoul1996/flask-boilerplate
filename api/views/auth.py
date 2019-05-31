@@ -13,6 +13,7 @@ from api.models.base import db
 from api.utils.mail import send_mail
 from api.utils.token import generate_confirmation_token, confirm_token
 from api.utils.args_validators import login_args, register_args, forget_args
+from api import config
 
 auth = Blueprint("auth", __name__, url_prefix="/api/v1/auth")
 
@@ -32,7 +33,7 @@ def login_required(view):
 def verify_email_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
-        if g.user and g.user.status:
+        if g.user and not g.user.status:
             return create_response(data={}, code=4002, message="need verify email address")
         return view(**kwargs)
 
@@ -77,7 +78,7 @@ def register(args):
         html = render_template("mail/register.html", ctx={"name": name, "token": token})
         print(html)
         send_mail(subject="Verify Email Address",
-                  sender=os.environ.get("qqmailaddress"),
+                  sender=config.get('base').MAIL_USERNAME,
                   recipients=[email],
                   html=html,
                   )

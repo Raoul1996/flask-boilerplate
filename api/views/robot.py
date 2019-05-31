@@ -3,7 +3,7 @@ from api.core import create_response, serialize_list
 from api.models import Robot
 from flask import (Blueprint, g)
 from api.models.base import db
-from api.views.auth import login_required
+from api.views.auth import login_required,verify_email_required
 from api.utils.args_validators import list_args, robot_post_args, robot_put_args
 from webargs.flaskparser import use_args
 
@@ -12,6 +12,7 @@ robot = Blueprint("robot", __name__, url_prefix="/api/v1/robot")
 
 @robot.route("/create", methods=["POST"])
 @login_required
+@verify_email_required
 @use_args(robot_post_args)
 def robot_create(args):
     name = args["name"]
@@ -50,6 +51,7 @@ def get_list(args):
 # https://webargs.readthedocs.io/en/latest/framework_support.html#url-matches
 @robot.route("/<robot_id>", methods=["PUT"])
 @login_required
+@verify_email_required
 @use_args(robot_put_args)
 def single_robot(args, **kwargs):
     robot_instance = Robot.query.filter_by(id=args["robot_id"]).first()

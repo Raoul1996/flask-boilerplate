@@ -9,7 +9,6 @@ data = Blueprint("data", __name__, url_prefix="/api/v1/data")
 
 
 @data.route("/add", methods=["POST"])
-@login_required
 @use_args(data_args)
 def robot_data(args):
     robot_id = args["robot_id"]

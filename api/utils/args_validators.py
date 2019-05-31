@@ -4,17 +4,18 @@ robot_put_args = {
     "robot_id": fields.Str(required=True, location="view_args"),
     "name": fields.Str(required=True, ),
     "description": fields.Str(required=True, ),
-    "type": fields.Str(required=True, )
+    "type": fields.Int(required=True, )
 }
 robot_post_args = {
     "name": fields.Str(required=True, ),
     "description": fields.Str(required=True, ),
-    "type": fields.Str(required=True, )
+    "type": fields.Int(required=True, )
 }
 register_args = {
     "name": fields.Str(required=True, validate=validate.Length(min=4)),
     "email": fields.Str(required=True, validate=validate.Email()),
     "password": fields.Str(required=True, validate=lambda p: len(p) >= 6),
+    "college": fields.Int(required=True)
 }
 login_args = {
     "email": fields.Str(required=True, validate=validate.Length(min=4)),

@@ -1,0 +1,6 @@
+[db]
+db_url = mysql+pymysql://example:example@127.0.0.1/example
+
+[email]
+pwd=your_pwd
+address=your_address
